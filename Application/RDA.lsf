@@ -1,0 +1,13 @@
+#BSUB -J Application[1-5]
+#BSUB -W 240:00
+#BSUB -o /your/path/to/log/CF_%I.log
+#BSUB -e /your/path/to/log/CF_%I.log
+#BSUB -cwd /your/path/to/working/station/
+#BSUB -n 2
+#BSUB -M 30
+#BSUB -R rusage[mem=30]
+#BSUB -u yourname@email.com
+
+module load R/4.3.1
+
+Rscript /your/path/to/Rscript/Real_Data_Application.R 1 3 $LSB_JOBINDEX > /your/path/to/log/CF_$LSB_JOBINDEX.log
