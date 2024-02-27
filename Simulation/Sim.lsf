@@ -1,0 +1,14 @@
+#BSUB -J CFOLS[1-6]
+#BSUB -W 24:00
+#BSUB -o /your/path/to/log/CF_%I.log
+#BSUB -e /your/path/to/log/CF_%I.log
+#BSUB -cwd /your/path/to/working/station/
+#BSUB -q e40medium
+#BSUB -n 40
+#BSUB -M 50
+#BSUB -R rusage[mem=50]
+#BSUB -u yourname@email.com
+
+module load R/4.3.1
+
+Rscript /your/path/to/Rscript/Simulation.R 40 3 2023 200 1 $LSB_JOBINDEX 1 1 0.2 0 > your/path/to/log/log_$LSB_JOBINDEX.txt
