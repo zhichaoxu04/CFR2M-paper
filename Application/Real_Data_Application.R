@@ -70,8 +70,8 @@ result <- R2(Y = Y, M = M, Covar = Covar, X = X, d = d, n = n,
              FDR = FDR, FDRCutoff = 0.2, method=method)
 result$output
 
-outputDir <- "/rsrch3/scratch/biostatistics/zxu7/Rotation/PW/Cohort_Cleaning/RDA_script/022624/Result/"
+outputDir <- "/your/path/to/Result/"
 setwd(outputDir)
-save(result, file = paste0(outputDir, "CFOLS2_", aID1, "_", aID2, "_",method, "_",outcome, "_",exposure,"_",FDR_out, ".RData"))
+save(result, file = paste0(outputDir, "CFOLS_", aID1, "_", aID2, "_",method, "_",outcome, "_",exposure,"_",FDR_out, ".RData"))
 
 
