@@ -56,32 +56,19 @@ data <- Save_033122 %>%
   filter(complete.cases(.))  %>% 
   sample_frac(size = 1, replace = F) 
 
-# ----- 
+# Run Analysis
 n <- nrow(data)   # Sample Size
-cat("Sample Size = ", n, "\n") 
 X <- as.numeric(data %>% dplyr::select(all_of(exposure)) %>% pull())   # X is the exposure
 M <- as.matrix(data %>% dplyr::select(starts_with("ID_")) )     # M is mediators, n * d
-cat("First 3 meditors name is:", colnames(M)[1:3], "\n")
-
 d <- ncol(M)   
-cat("number of M is:", d, "\n")
-
 Covar <- data %>% dplyr::select(all_of(CovarName), 
                                 -all_of(exposure))  # Other 5 variables
 Covar <- Covar %>% bind_cols(PCs)
-cat("Covariates names are:", colnames(Covar), "\n")
-
 Y <- as.numeric(data %>% dplyr::select(all_of(outcome)) %>% pull()) # Y is the outcome
-
-cat("Started. Current time is: ", as.character(Sys.time()), "\n")
-
 result <- R2(Y = Y, M = M, Covar = Covar, X = X, d = d, n = n, 
              iter.max = iter.max, nsis = NULL, first.half = TRUE, seed = seed,
              FDR = FDR, FDRCutoff = 0.2, method=method)
 result$output
-
-cat("Completed. Current time is: ", as.character(Sys.time()), "\n")
-
 
 outputDir <- "/rsrch3/scratch/biostatistics/zxu7/Rotation/PW/Cohort_Cleaning/RDA_script/022624/Result/"
 setwd(outputDir)
