@@ -1,26 +1,17 @@
 # ----- Load the packages
-# .libPaths("/home/zxu7/R/ubuntu/4.2.0")
+# .libPaths("/home/zxu/R/ubuntu/4.2.0")
 library(GMMAT)
 library(SIS)
 library(tidyverse)
 library(HDMT)
 library(tidyr)
-cat("Load Packages Completed", "\n")
 
-cat("This result is using the first half of the dataset.", "\n")
+# Load the data
+load("/your/path/to/yourdata.rData")
+load("/your/path/to/Top10PCs.rData")
+source("/your/path/to/InferenceFunctions.R") # Functions for inference
 
-### Use x.res.std for regression and estimation
-
-# ------ Load the data from local or HPC
-
-# load("S:/Rotation/PW/Cohort_Cleaning/RDA_033122.rData")
-# load("S:/Rotation/PW/Cohort_Cleaning/RDA_033122_meta.rData")
-load("/rsrch3/scratch/biostatistics/zxu7/Rotation/PW/Cohort_Cleaning/RDA_033122.rData")  # Change Rdata
-load("/rsrch3/scratch/biostatistics/zxu7/Rotation/PW/Cohort_Cleaning/Top10PCs.rData")
-source("/rsrch3/scratch/biostatistics/zxu7/Rotation/PW/Cohort_Cleaning/RDA_script/022624/RDA_Infer_101023.R") # Change Function 
-cat("Data Loaded", "\n")
-
-
+# Set some parameters to use cluster
 args <- commandArgs(trailingOnly=TRUE)
 aID1 <- as.numeric(args[1])   # Random Seed
 aID2 <- as.numeric(args[2])   # iter.max
@@ -52,15 +43,7 @@ if(FDR == TRUE){
   FDR_out <- "NOFDR"
 }
 
-cat("Random seed= ", seed, "\n")
-cat("Iter.max = ", iter.max, "\n")
-
 CovarName <- c("Age", "Sex", "Currsmk", "BMI", "Alcohol2")
-
-cat("outcome is ", outcome, "\n")
-cat("exposure is ", exposure, "\n")
-cat("FDR is ", FDR, "\n")
-cat("Method is ", method, "\n")
 
 set.seed(seed)
 data <- Save_033122 %>%  
@@ -72,13 +55,6 @@ data <- Save_033122 %>%
                 starts_with("ID_")) %>% 
   filter(complete.cases(.))  %>% 
   sample_frac(size = 1, replace = F) 
-
-# data[1:10, 1:10]
-
-# cat("N Row of data = ", dim(data)[1], "\n") 
-# cat("N Col of data = ", dim(data)[2], "\n") 
-# cat("Last colnames of dataset:", tail(colnames(data)), "\n")
-# cat("First 9 colnames of dataset:", head(colnames(data), 9), "\n")
 
 # ----- 
 n <- nrow(data)   # Sample Size
