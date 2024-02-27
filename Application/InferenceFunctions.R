@@ -1,5 +1,5 @@
 R2 <- function(Y, M, Covar, X, d, n, iter.max=3, nsis=NULL, first.half=TRUE, seed=2022, FDR=FALSE, FDRCutoff=0.2, method="iSIS"){
-  # ----- Load the packages
+  # Load packages
   library(GMMAT)
   library(SIS)
   library(tidyverse)
@@ -41,7 +41,6 @@ R2 <- function(Y, M, Covar, X, d, n, iter.max=3, nsis=NULL, first.half=TRUE, see
       res <- stats::residuals(l)
       return(res)
     }
-    
     
     # 1st residuals: M ~ Cov
     
@@ -110,9 +109,6 @@ R2 <- function(Y, M, Covar, X, d, n, iter.max=3, nsis=NULL, first.half=TRUE, see
     M_res_4 <- apply(M_res_4, 2, scale)
   }
  
-
-
-
 # regress Y on X
 tdat1 <- data.frame(y = Y_res_3, x = X_res_1) 
 f0 <- stats::lm(y~., data=tdat1)
@@ -144,15 +140,6 @@ M_res_1 <- apply(M_res_1, 2, scale)  # M.res ~ X.res - train
 
 M_res_2 <- apply(M_res_4, 2, MX_2)
 M_res_2 <- apply(M_res_2, 2, scale)  # M.res ~ X.res - test
-
-# # Get gamma and beta for all M
-# LmBeta1 <- stats::lm(Y_res_4 ~ M_res_4 + X_res_2)
-# AllBeta1 <- LmBeta1$coefficients[2:(ncol(M_res_4)+1)]
-# AllBetaPvalue1 <- summary(LmBeta1)$coefficients[, 4][2:(ncol(M_res_4)+1)]
-# 
-# LmBeta2 <- stats::lm(Y_res_3 ~ M_res_3 + X_res_1)
-# AllBeta2 <- LmBeta2$coefficients[2:(ncol(M_res_3)+1)]
-# AllBetaPvalue2 <- summary(LmBeta2)$coefficients[, 4][2:(ncol(M_res_3)+1)]
 
 Lmc1 <- stats::lm(Y_res_4 ~  X_res_2)
 Allc1 <- Lmc1$coefficients[2]
@@ -210,14 +197,7 @@ if(method == "HDMT"){
   m1 <- which(JM_FDR1 <= FDRCutoff)
   pabBefore_1 <- length(m1)
   pabAfter_1 <- length(m1)
-  
-  cat("In the subsample 1:", "\n")
-  cat("Value of alpha00 is:", nullEst1$alpha00, "\n")
-  cat("Value of alpha01 is:", nullEst1$alpha01, "\n")
-  cat("Value of alpha10 is:", nullEst1$alpha10, "\n")
-  cat("Value of alpha1 is:", nullEst1$alpha1, "\n")
-  cat("Value of alpha2 is:", nullEst1$alpha2, "\n")
-  
+
   nullEst2 <- HDMT::null_estimation(cbind(AllAlphaPvalue2, AllBetaPvalue2))
   JM_FDR2 <- HDMT::fdr_est(alpha00 = nullEst2$alpha00, 
                            alpha01 = nullEst2$alpha01, 
@@ -229,13 +209,6 @@ if(method == "HDMT"){
   m2 <- which(JM_FDR2 <= FDRCutoff)
   pabBefore_2 <- length(m2)
   pabAfter_2 <- length(m2)
-  
-  cat("In the subsample 2:", "\n")
-  cat("Value of alpha00 is:", nullEst2$alpha00, "\n")
-  cat("Value of alpha01 is:", nullEst2$alpha01, "\n")
-  cat("Value of alpha10 is:", nullEst2$alpha10, "\n")
-  cat("Value of alpha1 is:", nullEst2$alpha1, "\n")
-  cat("Value of alpha2 is:", nullEst2$alpha2, "\n")
   
   if(pabAfter_1 == 0 | pabAfter_1 == 0){
     cat("There is no mediators selected.", "\n")
@@ -395,25 +368,20 @@ SOS_CI_u <- SOS + qnorm(0.975) * sqrt(v_SOS) / sqrt(n)
 endTime <- Sys.time()
 TimeUsed <- difftime(endTime, startTime, units = "mins")
   
-  
-  return(list(output = c(Rsq.med = Rsq.mediated, v_asym = v_asym,  CI_width_asym = CI_width_asym, 
-           CI_low_asym = Rsq.mediated - CI_width_asym, CI_upper_asym = Rsq.mediated + CI_width_asym,
-           pabBefore_1 = round(pabBefore_1, 0), pabAfter_1 = round(pabAfter_1, 0), 
-           pabBefore_2 = round(pabBefore_2, 0), pabAfter_2 = round(pabAfter_2, 0), 
-           R_YX1=R_YX1, R_YX2=R_YX2, R_YX=R_YX, R_YX_total=R_YX_total,
-           R_YM1=R_YM1, R_YM2=R_YM2, R_YM=R_YM,
-           R_YXM1=R_YXM1, R_YXM2=R_YXM2, R_YXM=R_YXM,
-           SOS=SOS, v_asym_SOS=v_asym_SOS, SOS_CI_l=SOS_CI_l, SOS_CI_u=SOS_CI_u,
-           M1c=as.numeric(M1c), M2c=as.numeric(M2c), M1Gamma=as.numeric(M1Gamma), M2Gamma=as.numeric(M2Gamma),
-           Time = TimeUsed,
-           n = round(n,0), d = round(d,0)),
-         select1 = m1,
-         select2 = m2,
-         
-         AllBeta1 = AllBeta1, AllBetaPvalue1 = AllBetaPvalue1, AllAlpha1=AllAlpha1, AllAlphaPvalue1=AllAlphaPvalue1, 
-         Allc1 = Allc1, AllcPvalue1=AllcPvalue1,
-         AllBeta2 = AllBeta2, AllBetaPvalue2 = AllBetaPvalue2, AllAlpha2=AllAlpha2, AllAlphaPvalue2=AllAlphaPvalue2, 
-         Allc2 = Allc2, AllcPvalue2=AllcPvalue2))
+
+return(list(output = c(Rsq.med = Rsq.mediated, 
+                       v_asym = v_asym,  
+                       CI_width_asym = CI_width_asym, 
+                       pabAfter_1 = round(pabAfter_1, 0), 
+                       pabAfter_2 = round(pabAfter_2, 0), 
+                       SOS=SOS, 
+                       v_asym_SOS=v_asym_SOS, 
+                       M1c=as.numeric(M1c), M2c=as.numeric(M2c), 
+                       M1Gamma=as.numeric(M1Gamma), M2Gamma=as.numeric(M2Gamma),
+                       Time = TimeUsed,
+                       n = round(n,0), d = round(d,0)),
+            select1 = m1,
+            select2 = m2))
 }
 
 
