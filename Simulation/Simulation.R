@@ -1,4 +1,5 @@
 rm(list=ls())
+# Load packages
 library(foreach)
 require(doSNOW)
 library(parallel)
